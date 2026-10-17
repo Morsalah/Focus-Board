@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Focus Board</title>
+  <script>
+    // Apply the theme before first paint so dark mode doesn't flash white.
+    (function () {
+      try {
+        var theme = JSON.parse(localStorage.getItem('focusboard:v1:theme'));
+        if (theme !== 'light' && theme !== 'dark') {
+          theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.dataset.theme = theme;
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="css/styles.css">
+  <script type="module" src="js/main.js"></script>
+</head>
+<body>
+  <header class="app-header">
+    <h1>Focus Board</h1>
+    <div class="header-actions">
+      <button id="theme-toggle" class="icon-btn" type="button" aria-label="Toggle dark mode"></button>
+      <button id="settings-btn" class="icon-btn" type="button" aria-label="Settings">⚙</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section id="timer-card" class="card timer-card" data-mode="work" aria-labelledby="timer-heading">
+      <h2 id="timer-heading" class="visually-hidden">Pomodoro timer</h2>
+
+      <div class="mode-tabs" role="tablist" aria-label="Session type">
+        <button type="button" role="tab" data-mode="work">Focus</button>
+        <button type="button" role="tab" data-mode="short">Short Break</button>
+        <button type="button" role="tab" data-mode="long">Long Break</button>
+      </div>
+
+      <div id="time" class="time">25:00</div>
+      <div id="cycle-dots" class="cycle-dots"></div>
+      <p id="current-task" class="current-task"></p>
+
+      <div class="controls">
+        <button id="start-btn" class="btn primary" type="button">Start</button>
+        <button id="reset-btn" class="btn" type="button">Reset</button>
+        <button id="skip-btn" class="btn" type="button">Skip</button>
+      </div>
+
+      <p class="stats">Completed today: <strong id="today-count">0</strong></p>
+    </section>
+
+    <section class="card tasks-card" aria-labelledby="tasks-heading">
+      <h2 id="tasks-heading">Tasks</h2>
+
+      <form id="task-form" class="task-form" autocomplete="off">
+        <input id="task-input" type="text" placeholder="What do you need to do?" maxlength="200" aria-label="New task" required>
+        <button class="btn primary" type="submit">Add</button>
+      </form>
+
+      <div class="filters" role="group" aria-label="Filter tasks">
+        <button type="button" data-filter="all">All</button>
+        <button type="button" data-filter="active">Active</button>
+        <button type="button" data-filter="done">Done</button>
+      </div>
+
+      <ul id="task-list" class="task-list"></ul>
+      <p id="task-empty" class="empty"></p>
+      <p id="task-count" class="task-count"></p>
+    </section>
+  </main>
+
+  <dialog id="settings-dialog" class="settings-dialog">
+    <form id="settings-form" method="dialog">
+      <h2>Settings</h2>
+
+      <fieldset>
+        <legend>Durations (minutes)</legend>
+        <label>Focus <input name="work" type="number" min="1" max="180" required></label>
+        <label>Short break <input name="short" type="number" min="1" max="60" required></label>
+        <label>Long break <input name="long" type="number" min="1" max="120" required></label>
+        <label>Long break every <input name="longEvery" type="number" min="1" max="12" required> sessions</label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Alerts</legend>
+        <label class="check"><input name="sound" type="checkbox"> Play sound when a session ends</label>
+        <label class="check"><input name="notify" type="checkbox"> Show browser notification</label>
+        <small id="notify-hint" class="hint"></small>
+      </fieldset>
+
+      <div class="dialog-actions">
+        <button class="btn" type="submit" value="cancel" formnovalidate>Cancel</button>
+        <button class="btn primary" type="submit" value="save">Save</button>
+      </div>
+    </form>
+  </dialog>
+</body>
+</html>
